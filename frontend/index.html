@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Interview Simulator</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #121212);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #1f1f2e;
+            padding: 30px;
+            border-radius: 15px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            border-radius: 10px;
+            border: none;
+            padding: 10px;
+            font-size: 15px;
+            outline: none;
+            background: #2c2c3e;
+            color: white;
+        }
+
+        textarea::placeholder {
+            color: #aaa;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #00adb5, #00ffcc);
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #2c2c3e;
+            font-size: 18px;
+        }
+
+        .score-good {
+            color: #00ffcc;
+        }
+
+        .score-mid {
+            color: #ffd369;
+        }
+
+        .score-bad {
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🤖 AI Interview Simulator</h1>
+        <p class="subtitle">Practice AI-based interview evaluation</p>
+
+        <textarea id="answer" placeholder="Explain what Machine Learning is..."></textarea>
+
+        <button onclick="evaluateAnswer()">Evaluate</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function evaluateAnswer() {
+            const answer = document.getElementById("answer").value;
+            const resultDiv = document.getElementById("result");
+
+            // Loading effect
+            resultDiv.innerHTML = "⏳ Evaluating...";
+
+            const response = await fetch("http://127.0.0.1:5000/evaluate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    answer: answer,
+                    expected: "Machine learning is a subset of AI"
+                })
+            });
+
+            const data = await response.json();
+
+            let className = "";
+            if (data.score > 75) className = "score-good";
+            else if (data.score > 50) className = "score-mid";
+            else className = "score-bad";
+
+            resultDiv.innerHTML =
+                `<span class="${className}">Score: ${data.score.toFixed(2)}</span><br>${data.feedback}`;
+        }
+    </script>
+
+</body>
+</html>
