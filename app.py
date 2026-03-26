@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS 
+from flask_cors import CORS
 from model.evaluator import evaluate_answer
+import os
 
 app = Flask(__name__)
 CORS(app)
+
 @app.route('/evaluate', methods=['POST'])
 def evaluate():
     data = request.json
@@ -16,9 +18,11 @@ def evaluate():
         "score": score,
         "feedback": feedback
     })
-    
-import os
+
+@app.route('/')
+def home():
+    return "API is running ✅"
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 10000))  # 🔥 IMPORTANT
     app.run(host="0.0.0.0", port=port)
