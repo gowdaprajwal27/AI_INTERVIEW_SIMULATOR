@@ -105,34 +105,36 @@
     </div>
 
     <script>
-        async function evaluateAnswer() {
-            const answer = document.getElementById("answer").value;
-            const resultDiv = document.getElementById("result");
+async function evaluateAnswer() {
+    console.log("Button clicked 🔥");
 
-            // Loading effect
-            resultDiv.innerHTML = "⏳ Evaluating...";
+    try {
+        const answer = document.getElementById("answer").value;
 
-            const response = await fetch("http://127.0.0.1:5000/evaluate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    answer: answer,
-                    expected: "Machine learning is a subset of AI"
-                })
-            });
+        console.log("User answer:", answer);
 
-            const data = await response.json();
+        const response = await fetch("https://ai-interview-simulator-sjkb.onrender.com/evaluate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                answer: answer,
+                expected: "Machine learning is a subset of AI"
+            })
+        });
 
-            let className = "";
-            if (data.score > 75) className = "score-good";
-            else if (data.score > 50) className = "score-mid";
-            else className = "score-bad";
+        console.log("Response received:", response);
 
-            resultDiv.innerHTML =
-                `<span class="${className}">Score: ${data.score.toFixed(2)}</span><br>${data.feedback}`;
-        }
+        const data = await response.json();
+
+        document.getElementById("result").innerText =
+            "Score: " + data.score.toFixed(2) + " | " + data.feedback;
+
+    } catch (error) {
+        console.error("ERROR ❌:", error);
+    }
+}
     </script>
 
 </body>
